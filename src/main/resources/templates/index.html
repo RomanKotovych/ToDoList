@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Management</title>
+    <link rel="stylesheet" type="text/css" href="/css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/scripts.js"></script>
+</head>
+<body>
+<div>
+    <label for="itemsPerPage">Items per page:</label>
+    <select id="itemsPerPage" onchange="reloadPage()">
+        <option value="5" th:selected="${size == 5}">5</option>
+        <option value="10" th:selected="${size == 10}">10</option>
+        <option value="20" th:selected="${size == 20}">20</option>
+    </select>
+    <button onclick="reloadPage()">Reload</button>
+</div>
+
+<div class="gap"></div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Description</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : ${tasks}" data-task-id="${task.id}">
+        <td class="static-id" th:text="${task.id}">id</td>
+        <td>
+            <span class="description">
+                <span class="static-description" th:text="${task.description}">description</span>
+                <input type="text" class="edit-description" style="display: none;" />
+            </span>
+        </td>
+        <td>
+            <span class="status">
+                <span class="static-status" th:text="${task.status}">status</span>
+                <select class="edit-status" style="display: none;">
+                    <option value="IN_PROGRESS" th:selected="${task.status == 'IN_PROGRESS'}">IN_PROGRESS</option>
+                    <option value="DONE" th:selected="${task.status == 'DONE'}">DONE</option>
+                    <option value="PAUSED" th:selected="${task.status == 'PAUSED'}">PAUSED</option>
+                </select>
+            </span>
+        </td>
+        <td>
+            <button class="edit-btn">Edit</button>
+            <button class="save-btn" style="display: none;">Save</button>
+            <button class="delete-btn">Delete</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="pagination-container">
+    <a th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+       th:href="@{/tasks(page=${pageNumber - 1}, size=${size})}"
+       th:text="${pageNumber}">1</a>
+</div>
+
+<div class="new-task-form">
+    <h3>Create New Task</h3>
+    <form id="createTaskForm">
+        <label for="taskDescription">Description:</label>
+        <input type="text" id="taskDescription" name="description" required />
+        <label for="taskStatus">Status:</label>
+        <select id="taskStatus" name="status">
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="DONE">DONE</option>
+            <option value="PAUSED">PAUSED</option>
+        </select>
+        <button type="submit">Create Task</button>
+    </form>
+</div>
+
+</body>
+</html>
